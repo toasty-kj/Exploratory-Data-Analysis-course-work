@@ -23,16 +23,15 @@ PM2.5 Emissions Data : This file contains a data frame with all of the PM2.5 emi
 
 - **fips** :five-digit number (represented as a string) indicating the U.S. county
 
-**SCC** :The name of the source as indicated by a digit string (see source code classification table)
+- **SCC** :The name of the source as indicated by a digit string (see source code classification table)
 
-**Pollutant**: A string indicating the pollutant
+- **Pollutant**: A string indicating the pollutant
 
-**Emissions** : Amount of PM2.5 emitted, in tons
+- **Emissions** : Amount of PM2.5 emitted, in tons
 
-**type** : The type of source (point, non-point, on-road, or non-road)
+- **type** : The type of source (point, non-point, on-road, or non-road)
 
-**year** : The year of emissions recorded
+- **year** : The year of emissions recorded
 
-**Source Classification Code Table** : This table provides a mapping from the SCC digit strings in the Emissions table to the actual name of the PM2.5 source. The sources are categorized in a few different ways from more general to more specific and you may choose to explore whatever categories you think are most useful. For example, source “10100101” is known as “Ext Comb /Electric Gen /Anthracite Coal /Pulverized Coal”.
+- **Source Classification Code Table** : This table provides a mapping from the SCC digit strings in the Emissions table to the actual name of the PM2.5 source. The sources are categorized in a few different ways from more general to more specific and you may choose to explore whatever categories you think are most useful. For example, source “10100101” is known as “Ext Comb /Electric Gen /Anthracite Coal /Pulverized Coal”.
 
-You can read each of the two files using the \color{red}{\verb|readRDS()|}readRDS() function in R. For example, reading in each file can be done with the following code:

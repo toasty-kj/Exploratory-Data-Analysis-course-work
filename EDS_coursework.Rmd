@@ -1,8 +1,11 @@
 ---
-title: ""
-author: "koji"
+title: "EDA corsework"
+author: "K.TAKAKI"
 date: "2022/1/24"
-output: html_document
+output: 
+html_document: 
+keep_md: true
+
 ---
 
 ```{r setup, include=FALSE}
@@ -34,20 +37,61 @@ Let's make a plot showing the total PM2.5 emission from all sources for each of 
 ```{r, cache=TRUE}
 merged_data <- merge(NEI, SCC, by = "SCC")
 anual_total_emission <- aggregate(Emissions ~ year, data = merged_data, sum, na.rm=TRUE)
-plot(anual_total_emission)
+g1 <-barplot(height = anual_total_emission$Emissions, names = anual_total_emission$year)
 ```
 
 # total emissions from PM2.5 decreased in the Baltimore City, Maryland (fips == "24510"|}fips == "24510") from 1999 to 2008?
 
 ```{r, cache=TRUE}
-baltimore_data <- aggregate(Emissions ~ year + type, data = subset(merged_data, fips == "24510"), sum, na.rm=TRUE)
-plot(aggregate(Emissions ~ year, data = subset(merged_data, fips == "24510"), sum, na.rm=TRUE))
+baltimore_type <- aggregate(Emissions ~ year + type, data = subset(merged_data, fips == "24510"), sum, na.rm=TRUE)
+baltimore_data <- aggregate(Emissions ~ year, data = subset(merged_data, fips == "24510"), sum, na.rm=TRUE)
+g2 <- barplot(height = baltimore_data$Emissions, names = baltimore_data$year)
 ```
 
 ```{r, cache=TRUE}
-g <- ggplot(baltimore_data, aes(year, Emissions, color = type)) + geom_line(aes(fill=type), show.legend = TRUE)
-g
+ g3 <- ggplot(baltimore_type, aes(year, Emissions, color = type)) + geom_line(aes(fill=type), show.legend = TRUE)
+g3
 ```
 
+check which column contains "coal"
+```{r, cache=TRUE}
+length(grep("[Cc]oal", SCC$Short.Name))
+length(grep("[Cc]oal", SCC$SCC.Level.One))
+length(grep("[Cc]oal", SCC$SCC.Level.Two))
+length(grep("[Cc]oal", SCC$SCC.Level.Three))
+length(grep("[Cc]oal", SCC$SCC.Level.Four))
+```
+
+
+```{r, cache=FALSE}
+coal_list <- grep("[Cc]oal", merged_data$Short.Name)
+coal_list <- append(coal_list ,grep("[Cc]oal", merged_data$SCC.Level.Three))
+coal_list <- append(coal_list ,grep("[Cc]oal", merged_data$SCC.Level.Four))
+coal_list <- unique(coal_list)
+coal_related_emission <- aggregate(Emissions ~ year, data = merged_data[coal_list,4:6], sum, na.rm=TRUE)
+g4 <- ggplot(coal_related_emission, aes(factor(year), Emissions, fill=Emissions)) + geom_bar(stat = "identity")
+g4
+```
+
+```{r, cache=TRUE}
+baltimore_car <- subset(merged_data, fips == "24510")
+col_list <- NULL
+for (i in 1 : ncol(baltimore_car))
+        if (length(grep("[Cc]ar", baltimore_car[,i])) > 0) {col_list <- append(col_list, i); print(colnames(baltimore_car[i]))}
+col_list
+```
+
+```{r,cache=TRUE}
+car_list <- NULL
+for (i in 1:length(col_list)) car_list <- append(car_list, grep("[Cc]ar", baltimore_car[,col_list[i]]))
+car_list <- unique(car_list)
+car_related_emission <- aggregate(Emissions ~ year, data = baltimore_car[car_list, 4:6], sum, na.rm=TRUE)
+g5 <- ggplot(car_related_emission, aes(factor(year), Emissions, fill=Emissions)) + geom_bar(stat = "identity")
+g5
+```
+
+```{r, cache=TRUE}
+
+```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

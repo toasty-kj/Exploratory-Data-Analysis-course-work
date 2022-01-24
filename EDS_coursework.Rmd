@@ -11,6 +11,7 @@ keep_md: yes
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
+library(dplyr)
 ```
 
 ## download and unzip the file
@@ -73,25 +74,48 @@ g4 <- ggplot(coal_related_emission, aes(factor(year), Emissions, fill=Emissions)
 g4
 ```
 
+
+we only need to change the "fips" for emissions from motor vehicle source
 ```{r, cache=TRUE}
-baltimore_car <- subset(merged_data, fips == "24510")
-col_list <- NULL
-for (i in 1 : ncol(baltimore_car))
-        if (length(grep("[Cc]ar", baltimore_car[,i])) > 0) {col_list <- append(col_list, i); print(colnames(baltimore_car[i]))}
-col_list
+vehicle <- function(index) {
+        car_data <- subset(merged_data, fips == index)
+        col_list <- NULL
+        for (i in 1: ncol(car_data))
+                if (length(grep("[Cc]ar", car_data[,i])) > 0) {col_list <- append(col_list, i);
+                print(colnames(car_data[i]))}
+        data_list <- NULL
+        for (i in 1 : length(col_list)) col_list <- append(col_list, grep("[Cc]ar", car_data[,col_list[i]]))
+        data_list <- unique(data_list)
+        car_related_emission <- aggregate(Emissions ~ year, data = car_data[col_list, 4:6], sum, na.rm=TRUE)
+        g <- ggplot(car_related_emission, aes(factor(year), Emissions, fill=Emissions)) + geom_bar(stat = "identity")
+        g
+}
 ```
 
-```{r,cache=TRUE}
-car_list <- NULL
-for (i in 1:length(col_list)) car_list <- append(car_list, grep("[Cc]ar", baltimore_car[,col_list[i]]))
-car_list <- unique(car_list)
-car_related_emission <- aggregate(Emissions ~ year, data = baltimore_car[car_list, 4:6], sum, na.rm=TRUE)
-g5 <- ggplot(car_related_emission, aes(factor(year), Emissions, fill=Emissions)) + geom_bar(stat = "identity")
-g5
-```
-
-```{r, cache=TRUE}
+```{r}
+g5 <- vehicle("24510")
 
 ```
+
+```{r}
+compare_car <- function(index) {
+        car_data <- subset(merged_data, fips == index)
+        col_list <- NULL
+        for (i in 1: ncol(car_data))
+                if (length(grep("[Cc]ar", car_data[,i])) > 0) {col_list <- append(col_list, i);
+                print(colnames(car_data[i]))}
+        data_list <- NULL
+        for (i in 1 : length(col_list)) col_list <- append(col_list, grep("[Cc]ar", car_data[,col_list[i]]))
+        data_list <- unique(data_list)
+        car_related_emission <- aggregate(Emissions ~ year, data = car_data[col_list, 4:6], sum, na.rm=TRUE)
+}
+bal_car <- compare_car("24510")
+LA_car <- compare_car("06037")
+bal_car <- mutate(bal_car, country = "baltimore")
+LA_car <- mutate(LA_car, country = "Los Angels")
+t <- rbind(bal_car, LA_car)
+ggplot(t, aes(factor(year), Emissions, fill = country, color = country)) + geom_bar(stat = "identity", show.legend = TRUE, position = "dodge")
+```
+
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

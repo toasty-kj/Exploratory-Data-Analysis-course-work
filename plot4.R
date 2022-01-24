@@ -1,0 +1,17 @@
+library(ggplot2)
+library(dplyr)
+
+png(filename = "plot4.png")
+length(grep("[Cc]oal", SCC$Short.Name))
+length(grep("[Cc]oal", SCC$SCC.Level.One))
+length(grep("[Cc]oal", SCC$SCC.Level.Two))
+length(grep("[Cc]oal", SCC$SCC.Level.Three))
+length(grep("[Cc]oal", SCC$SCC.Level.Four))
+coal_list <- grep("[Cc]oal", merged_data$Short.Name)
+coal_list <- append(coal_list ,grep("[Cc]oal", merged_data$SCC.Level.Three))
+coal_list <- append(coal_list ,grep("[Cc]oal", merged_data$SCC.Level.Four))
+coal_list <- unique(coal_list)
+coal_related_emission <- aggregate(Emissions ~ year, data = merged_data[coal_list,4:6], sum, na.rm=TRUE)
+g4 <- ggplot(coal_related_emission, aes(factor(year), Emissions, fill=Emissions)) + geom_bar(stat = "identity")
+g4
+dev.off()

@@ -246,7 +246,7 @@ g5
 ![](EDS_coursework_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
 
 
-The emissions from motor vehicle sources seems not have changed in Baltimore City
+### The emissions from motor vehicle sources seems not have changed in Baltimore City
 
 ## Compare emissions from motor vehicle sources in Baltimore City with emissions from motor vehicle sources in Los Angeles County, California
 

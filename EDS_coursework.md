@@ -108,8 +108,9 @@ dev.off()
 ## null device 
 ##           1
 ```
+### During the period between 1999 and 2008, the total emissions from PM2.5 decreased from 6,000 tons to 2,000 tons
 
-# total emissions from PM2.5 decreased in the Baltimore City, Maryland (fips == "24510"|}fips == "24510") from 1999 to 2008?
+## total emissions from PM2.5 decreased in the Baltimore City, Maryland (fips == "24510"|}fips == "24510") from 1999 to 2008?
 
 
 ```r
@@ -120,6 +121,10 @@ g2 <- barplot(height = baltimore_data$Emissions, names = baltimore_data$year, ma
 
 ![](EDS_coursework_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
 
+### There was no significant decrease in between 1999 and 2008
+
+
+## Of the four types of sources indicated by the \color{red}{\verb|type|}type (point, nonpoint, onroad, nonroad) variable, which of these four sources have seen decreases in emissions from 1999–2008 for Baltimore City?
 
 ```r
 g3 <- ggplot(baltimore_type, aes(year, Emissions, color = type)) + geom_line(aes(fill=type), show.legend = TRUE)
@@ -136,6 +141,10 @@ g3
 ```
 
 ![](EDS_coursework_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+### Each line shows emissions by type. based on the plot, they are decreasing by time expect to the emission on "POINT"
+
+
+## Across the United States, how have emissions from coal combustion-related sources changed from 1999–2008?
 
 check which column contains "coal"
 
@@ -189,9 +198,17 @@ coal_list <- unique(coal_list)
 coal_related_emission <- aggregate(Emissions ~ year, data = merged_data[coal_list,4:6], sum, na.rm=TRUE)
 g4 <- ggplot(coal_related_emission, aes(factor(year), Emissions, fill=Emissions)) + geom_bar(stat = "identity")
 g4 <- g4 + labs(title = "Total emissions from coal combustion-related sources",x = "year")
+g4
 ```
 
+![](EDS_coursework_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
 
+### From the bar plot, emissions from coal combustion-related sources decreased significantly between the period
+
+
+## How have emissions from motor vehicle sources changed from 1999–2008 in Baltimore City?
+
+define function to return plots showing emissions from car in specified country by fips
 we only need to change the "fips" for emissions from motor vehicle source
 
 ```r
@@ -228,6 +245,10 @@ g5
 
 ![](EDS_coursework_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
 
+
+The emissions from motor vehicle sources seems not have changed in Baltimore City
+
+## Compare emissions from motor vehicle sources in Baltimore City with emissions from motor vehicle sources in Los Angeles County, California
 
 ```r
 compare_car <- function(index) {
@@ -266,11 +287,10 @@ bal_car <- mutate(bal_car, country = "baltimore")
 LA_car <- mutate(LA_car, country = "Los Angels")
 t <- rbind(bal_car, LA_car)
 g6 <- ggplot(t, aes(factor(year), Emissions, fill = country, color = country)) + geom_bar(stat = "identity", show.legend = TRUE, position = "dodge")
-g6 <- g6 + labs(title = "Emissions from motor souces in Baltimore city and LA", x = "year")
+g6 <- g6 + labs(title = "Emissions from motor sources in Baltimore city and LA", x = "year")
 g6
 ```
 
 ![](EDS_coursework_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+### As a result of the comparison, the emissions in LA has increased from 1999 to 2002, but it significantly decreased after 2005 to 2008 in contrast that the emissions in Baltimore has not changed well.
 
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

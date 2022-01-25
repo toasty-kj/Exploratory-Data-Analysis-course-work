@@ -95,10 +95,19 @@ Let's make a plot showing the total PM2.5 emission from all sources for each of 
 ```r
 merged_data <- merge(NEI, SCC, by = "SCC")
 anual_total_emission <- aggregate(Emissions ~ year, data = merged_data, sum, na.rm=TRUE)
-g1 <-barplot(height = anual_total_emission$Emissions, names = anual_total_emission$year)
+g1 <-barplot(height = anual_total_emission$Emissions, names = anual_total_emission$year, main = "total emissions from PM2.5 in the United States from 1999 to 2008")
 ```
 
 ![](EDS_coursework_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
+```r
+dev.off()
+```
+
+```
+## null device 
+##           1
+```
 
 # total emissions from PM2.5 decreased in the Baltimore City, Maryland (fips == "24510"|}fips == "24510") from 1999 to 2008?
 
@@ -106,14 +115,14 @@ g1 <-barplot(height = anual_total_emission$Emissions, names = anual_total_emissi
 ```r
 baltimore_type <- aggregate(Emissions ~ year + type, data = subset(merged_data, fips == "24510"), sum, na.rm=TRUE)
 baltimore_data <- aggregate(Emissions ~ year, data = subset(merged_data, fips == "24510"), sum, na.rm=TRUE)
-g2 <- barplot(height = baltimore_data$Emissions, names = baltimore_data$year)
+g2 <- barplot(height = baltimore_data$Emissions, names = baltimore_data$year, main = " Total emissions from PM2.5 in the Baltimore City, Maryland from 1999 to 2008")
 ```
 
 ![](EDS_coursework_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
 
 
 ```r
- g3 <- ggplot(baltimore_type, aes(year, Emissions, color = type)) + geom_line(aes(fill=type), show.legend = TRUE)
+g3 <- ggplot(baltimore_type, aes(year, Emissions, color = type)) + geom_line(aes(fill=type), show.legend = TRUE)
 ```
 
 ```
@@ -121,10 +130,8 @@ g2 <- barplot(height = baltimore_data$Emissions, names = baltimore_data$year)
 ```
 
 ```r
-g3
+g3 <- g3 + labs(title = "Which of these four sources have seen decreases in emissions from 1999–2008 for Baltimore City")
 ```
-
-![](EDS_coursework_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
 check which column contains "coal"
 
@@ -177,10 +184,8 @@ coal_list <- append(coal_list ,grep("[Cc]oal", merged_data$SCC.Level.Four))
 coal_list <- unique(coal_list)
 coal_related_emission <- aggregate(Emissions ~ year, data = merged_data[coal_list,4:6], sum, na.rm=TRUE)
 g4 <- ggplot(coal_related_emission, aes(factor(year), Emissions, fill=Emissions)) + geom_bar(stat = "identity")
-g4
+g4 <- g4 + labs(title = "Total emissions from coal combustion-related sources")
 ```
-
-![](EDS_coursework_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
 
 
 we only need to change the "fips" for emissions from motor vehicle source
@@ -211,6 +216,13 @@ g5 <- vehicle("24510")
 ## [1] "SCC.Level.Three"
 ## [1] "SCC.Level.Four"
 ```
+
+```r
+g5 <- g5 + labs(title = "Emissions from motor vehicle sources changed in Baltimore City")
+g5
+```
+
+![](EDS_coursework_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
 
 
 ```r
@@ -249,7 +261,9 @@ LA_car <- compare_car("06037")
 bal_car <- mutate(bal_car, country = "baltimore")
 LA_car <- mutate(LA_car, country = "Los Angels")
 t <- rbind(bal_car, LA_car)
-ggplot(t, aes(factor(year), Emissions, fill = country, color = country)) + geom_bar(stat = "identity", show.legend = TRUE, position = "dodge")
+g6 <- ggplot(t, aes(factor(year), Emissions, fill = country, color = country)) + geom_bar(stat = "identity", show.legend = TRUE, position = "dodge")
+g6 <- g6 + labs(title = "Emissions from motor souces in Baltimore city and LA")
+g6
 ```
 
 ![](EDS_coursework_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
